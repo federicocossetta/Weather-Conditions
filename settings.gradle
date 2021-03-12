@@ -1,0 +1,2 @@
+include ':weather-forecast'
+rootProject.name = "My Application"

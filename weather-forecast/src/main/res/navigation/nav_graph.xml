@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentHome">
+    <fragment
+        android:id="@+id/fragmentHome"
+        android:name="com.fcossetta.myapplication.main.ui.HomeFragment"
+        android:label="loadingFragment"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_loading_to_detail"
+            app:destination="@id/weatherDetail"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="forecastsList"
+                app:argType="com.fcossetta.myapplication.main.data.model.WeatherDetail" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/weatherDetail"
+        android:name="com.fcossetta.myapplication.main.ui.ForecastDetailFragment"
+        android:label="main_fragment"
+        app:popUpToInclusive="true"
+        tools:layout="@layout/weather_detail">
+        <argument
+
+            android:name="forecastsList"
+            app:argType="com.fcossetta.myapplication.main.data.model.WeatherDetail" />
+    </fragment>
+
+</navigation>
