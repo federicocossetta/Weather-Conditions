@@ -10,6 +10,8 @@ open class ForecastEvent : UIEvent() {
         ForecastEvent()
     data class WeatherConditionFound(val weather: Forecast) :
         ForecastEvent()
+    data class Error(val city: String?) :
+        ForecastEvent()
     data class DailyInfoFound(val forecasts: ForecastDailyInfo) :
         ForecastEvent()
 

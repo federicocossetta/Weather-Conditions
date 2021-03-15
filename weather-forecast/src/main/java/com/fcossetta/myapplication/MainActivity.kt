@@ -1,15 +1,23 @@
 package com.fcossetta.myapplication
 
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.fcossetta.myapplication.main.data.model.City
-import com.fcossetta.myapplication.main.data.model.Forecast
-import com.fcossetta.myapplication.main.data.model.ForecastDailyInfo
-import com.fcossetta.myapplication.main.data.model.ForecastList
-import com.fcossetta.myapplication.main.ui.ForecastEvent
 import com.fcossetta.myapplication.main.data.ForecastViewModel
+import com.fcossetta.myapplication.main.data.model.*
+import com.fcossetta.myapplication.main.ui.ForecastEvent
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.uniflow.androidx.flow.onEvents
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -19,26 +27,38 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val TAG: String = "LOG"
+    private lateinit var findItem: MenuItem
+    private lateinit var searchManager: SearchManager
     private lateinit var navController: NavController
     private val viewModel: ForecastViewModel by viewModel()
     var groups: LinkedHashMap<String, List<Forecast>>? = null
     var city: City? = null
     var weather: Forecast? = null
     var forecastList: ForecastList? = null
-    var cityName: String = "London"
+    lateinit var cityName: String
+    private lateinit var formatOut: SimpleDateFormat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         setContentView(R.layout.activity_main)
-
+        val fab: FloatingActionButton = findViewById(R.id.fab)
+        val imm: InputMethodManager =
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
         navController = navHostFragment.navController
-        val fab: FloatingActionButton = findViewById(R.id.fab)
-
         fab.setOnClickListener { view ->
-            viewModel.getWeatherByCity(cityName)
+            findItem.isVisible = true
+            (findItem.actionView as SearchView).apply {
+                setSearchableInfo(searchManager.getSearchableInfo(componentName))
+                setIconifiedByDefault(false)
+                requestFocus()
+            }
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
         }
-        val formatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        formatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         onEvents(viewModel) {
             when (val event = it.take()) {
                 is ForecastEvent.WeatherConditionFound -> {
@@ -62,12 +82,66 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 }
+                is ForecastEvent.Error -> {
+                    val cityRequested = event.city
+                    //TODO: BETTER ERROR HANDING
+                    var error =
+                        if (cityRequested != null) "No city found with name $cityRequested. Please enter the full city name!" else "Generic Error"
+                    Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
+                }
                 is ForecastEvent.DailyInfoFound -> {
                     val dailyForecast: ForecastDailyInfo = event.forecasts
-                    viewModel.emitData(weather, groups, dailyForecast, cityName)
+                    val currentDay = ForecastDetail(groups, weather, dailyForecast, cityName)
+                    title = cityName
+                    (findItem.actionView as SearchView).apply {
+                        setQuery("", false);
+                        isIconified = true;
+                    }
+                    findItem.isVisible = false
+                    navHostFragment.navController.navigate(
+                        NavGraphDirections.actionLoadData(
+                            currentDay
+                        )
+                    )
 
                 }
             }
         }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                cityName = query
+                viewModel.getWeatherByCity(cityName)
+            }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        if (menu != null) {
+            findItem = menu.findItem(R.id.menu_search)
+            var searchView = findItem.actionView as SearchView
+            searchView.apply {
+                // Assumes current activity is the searchable activity
+                setSearchableInfo(searchManager.getSearchableInfo(componentName))
+                focusable = View.FOCUSABLE
+                setIconifiedByDefault(true) // Do not iconify the widget; expand it by default
+            }
+
+        }
+        return true
+    }
+
+
 }

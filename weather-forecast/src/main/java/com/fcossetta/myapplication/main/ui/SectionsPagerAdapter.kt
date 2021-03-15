@@ -2,7 +2,7 @@ package com.fcossetta.myapplication.main.ui
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import com.fcossetta.myapplication.main.data.model.Forecast
 
 
@@ -10,12 +10,12 @@ class SectionsPagerAdapter(
     fm: FragmentManager,
     var forecastMap: Map<String, List<Forecast>>,
     var city: String
-) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         val key = forecastMap.keys.elementAt(position)
         return ForecastListFragment.newInstance(
-            forecastMap.get(key),
+            forecastMap[key],
             city,
         )
     }

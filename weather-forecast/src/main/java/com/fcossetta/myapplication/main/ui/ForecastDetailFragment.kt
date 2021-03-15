@@ -31,13 +31,13 @@ class ForecastDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (
             activity?.supportFragmentManager != null) {
-            val sectionsPagerAdapter = SectionsPagerAdapter(
-                requireActivity().supportFragmentManager,
-                forecastsList.forecast!!, forecastsList.currentCity!!
-            )
-            view_pager.adapter = sectionsPagerAdapter
             val tabs: TabLayout = tabs
             tabs.setupWithViewPager(view_pager)
+            val sectionsPagerAdapter = SectionsPagerAdapter(
+                requireActivity().supportFragmentManager,
+                forecastsList.forecast!!, forecastsList.currentCity
+            )
+            view_pager.adapter = sectionsPagerAdapter
             val iterator: Iterator<*> = forecastsList.forecast.iterator()
             var n = 0
             while (iterator.hasNext()) {

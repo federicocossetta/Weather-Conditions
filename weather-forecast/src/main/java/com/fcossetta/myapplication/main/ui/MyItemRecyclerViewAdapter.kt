@@ -10,15 +10,11 @@ import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
 import com.fcossetta.myapplication.main.data.model.Forecast
 import com.fcossetta.myapplication.main.utils.Constants
-import kotlinx.android.synthetic.main.weather_item_list.view.*
 import org.koin.core.context.GlobalContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem].
- * TODO: Replace the implementation with code for your data type.
- */
+
 class MyItemRecyclerViewAdapter(
     private val values: List<Forecast>,
     private val sdf: SimpleDateFormat = SimpleDateFormat("hh aa", Locale.getDefault())
