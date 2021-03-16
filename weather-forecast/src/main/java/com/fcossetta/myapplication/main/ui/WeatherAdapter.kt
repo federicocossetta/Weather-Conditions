@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
 import com.fcossetta.myapplication.main.data.model.ShortForecast
+import com.fcossetta.myapplication.main.utils.CommonFunctions
 import com.fcossetta.myapplication.main.utils.Constants.Companion.IMG_URL_BIG
 import kotlinx.android.synthetic.main.weather_item_list.view.*
 import org.koin.core.context.GlobalContext
@@ -42,8 +43,8 @@ class WeatherAdapter(
                 glide.load(format).into(itemView.forecast)
             }
 
-            itemView.min.text = current.temp?.min.toString()
-            itemView.max.text = current.temp?.max.toString()
+            itemView.min.text = CommonFunctions.formatTemp(current.temp?.min)
+            itemView.max.text = CommonFunctions.formatTemp(current.temp?.max)
         }
     }
 

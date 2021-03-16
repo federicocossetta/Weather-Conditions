@@ -11,6 +11,7 @@ import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
 import com.fcossetta.myapplication.main.data.model.Forecast
 import com.fcossetta.myapplication.main.utils.Constants
+import com.fcossetta.myapplication.main.utils.CommonFunctions
 import kotlinx.android.synthetic.main.fragment_forecast_detail.*
 import org.koin.core.context.GlobalContext
 
@@ -19,8 +20,6 @@ class ForecastDetailFragment : Fragment() {
 
     val args: ForecastDetailFragmentArgs by navArgs()
     private val glide: RequestManager by lazy { GlobalContext.get().koin.get() }
-
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,11 +35,11 @@ class ForecastDetailFragment : Fragment() {
             weather_condition.text = it.description
         }
         forecast.main?.let {
-            temp.text = it.temp.toString()
-            val tempMin = it.minTemp.toString()
-            val tempMax = it.maxTemp.toString()
+            temp.text = CommonFunctions.formatTemp(it.temp)
+            val tempMin = CommonFunctions.formatTemp(it.minTemp)
+            val tempMax = CommonFunctions.formatTemp(it.maxTemp)
             minMax.text = "$tempMin / $tempMax"
-            feel.text = it.feelsLike.toString()
+            feel.text = CommonFunctions.formatTemp(it.feelsLike)
             humidity.text = it.humidity.toString()
             pressure.text = it.pressure.toString()
         }
@@ -67,5 +66,6 @@ class ForecastDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_forecast_detail, container, false)
     }
+
 
 }

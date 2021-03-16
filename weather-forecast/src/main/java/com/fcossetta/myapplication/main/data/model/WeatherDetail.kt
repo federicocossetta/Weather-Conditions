@@ -4,6 +4,5 @@ import java.io.Serializable
 
 data class WeatherDetail(
     val forecast: LinkedHashMap<String, List<Forecast>>?,
-    val currentDay: String,
-    val currentCity: String
+    val currentDay: String
 ) : Serializable

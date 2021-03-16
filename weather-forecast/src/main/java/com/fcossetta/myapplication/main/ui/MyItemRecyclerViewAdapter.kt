@@ -10,6 +10,7 @@ import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
 import com.fcossetta.myapplication.main.data.ForecastViewModel
 import com.fcossetta.myapplication.main.data.model.Forecast
+import com.fcossetta.myapplication.main.utils.CommonFunctions
 import com.fcossetta.myapplication.main.utils.Constants
 import org.koin.core.context.GlobalContext
 import java.text.SimpleDateFormat
@@ -20,7 +21,7 @@ class MyItemRecyclerViewAdapter(
     private val values: List<Forecast>,
     private val viewModel: ForecastViewModel,
     private val cellClickListener: CellClickListener,
-    private val sdf: SimpleDateFormat = SimpleDateFormat("hh aa", Locale.getDefault())
+    private val sdf: SimpleDateFormat = SimpleDateFormat("HH", Locale.getDefault())
 ) : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
     private val glide: RequestManager by lazy { GlobalContext.get().koin.get() }
 
@@ -33,7 +34,7 @@ class MyItemRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
         holder.day.text = sdf.format(item.dt?.times(1000))
-        holder.temp.text = item.main?.temp.toString()
+        holder.temp.text = CommonFunctions.formatTemp(item.main?.temp)
         holder.description.text = item.weather?.get(0)?.description.toString()
         val iconUrl = String.format(Constants.IMG_URL, item.weather?.get(0)?.icon)
         glide.load(iconUrl).into(holder.icon)

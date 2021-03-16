@@ -1,5 +1,6 @@
 package com.fcossetta.myapplication.main.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.fcossetta.myapplication.main.data.model.Forecast
 import com.fcossetta.myapplication.main.data.model.ShortForecast
 import com.fcossetta.myapplication.main.data.model.WeatherDetail
 import com.fcossetta.myapplication.main.utils.Constants
+import com.fcossetta.myapplication.main.utils.CommonFunctions
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.core.context.GlobalContext
 import java.text.SimpleDateFormat
@@ -39,25 +41,33 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val forecastDetail = args.forecastDetail
         forecastDetail.let {
-            showData(forecastDetail.dailyForecast, forecastDetail.weather, forecastDetail.cityName)
+            showData(forecastDetail.dailyForecast, forecastDetail.weather)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showData(
         shortInfo: List<ShortForecast>?,
-        currentForecast: Forecast?,
-        cityNameString: String
+        currentForecast: Forecast?
     ) {
-        cityName.text = cityNameString
         if (currentForecast != null) {
-            val weather = currentForecast?.weather?.get(0)
+            val weather = currentForecast.weather?.get(0)
             if (weather != null) {
                 val format = String.format(Constants.IMG_URL_BIG, weather.icon)
                 glide.load(format).into(icon)
+                weather_name.text = weather.main
+                weather_description.text = weather.description
+            }
+            currentForecast.dt?.times(1000)
+            currentForecast.dt?.let {
+                dt.text =
+                    SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(it.times(1000)))
             }
             if (currentForecast.main != null) {
-                max.text = currentForecast.main.maxTemp.toString()
-                min.text = currentForecast.main.minTemp.toString()
+                temp_current.text = CommonFunctions.formatTemp(currentForecast.main.temp)
+                val maxTemp = CommonFunctions.formatTemp(currentForecast.main.maxTemp)
+                val minTemp = CommonFunctions.formatTemp(currentForecast.main.minTemp)
+                minMax.text = "$minTemp / $maxTemp"
             }
         }
         if (shortInfo != null) {
@@ -87,7 +97,7 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
         val navHostFragment =
             requireActivity().supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
         val currentDay =
-            WeatherDetail(args.forecastDetail.forecasts, data, args.forecastDetail.cityName)
+            WeatherDetail(args.forecastDetail.forecasts, data)
         navHostFragment.navController.navigate(
             HomeFragmentDirections.actionLoadingToDetail(
                 currentDay

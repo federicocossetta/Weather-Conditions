@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     forecastList = event.forecasts
                     if (forecastList != null) {
                         city = event.forecasts.city
-                        val formatIn = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+                        val formatIn = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         //remove today forecast
                         val filter = forecastList!!.forecasts?.filter { forecast ->
                             val times = forecast.dt?.times(1000)
@@ -111,8 +111,8 @@ class MainActivity : AppCompatActivity() {
                             instance.time
                         ))
                     }
-                    val currentDay = ForecastDetail(groups, weather, filter, cityName)
-                    title = cityName.capitalize()
+                    val currentDay = ForecastDetail(groups, weather, filter)
+                    title = cityName.capitalize(Locale.getDefault())
                     (findItem.actionView as SearchView).apply {
                         setQuery("", false);
                         isIconified = true;

@@ -40,7 +40,8 @@ class ForecastsFragment : Fragment() {
 
             val sectionsPagerAdapter = SectionsPagerAdapter(
                 this,
-                forecastsList.forecast!!, object : CellClickListener {
+                forecastsList.forecast!!,
+                object : CellClickListener {
                     override fun onCellClickListener(data: Forecast) {
                         val navHostFragment =
                             requireActivity().supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
@@ -61,9 +62,9 @@ class ForecastsFragment : Fragment() {
                 }
                 n++
             }
-            view_pager.doOnPreDraw { view_pager.currentItem = n }
+            view_pager.doOnPreDraw { view_pager.setCurrentItem(n, false) }
             TabLayoutMediator(tabs, view_pager) { tab, position ->
-                tab.text =  forecastsList.forecast!!.keys.elementAt(position)
+                tab.text = forecastsList.forecast!!.keys.elementAt(position)
             }.attach()
         }
     }

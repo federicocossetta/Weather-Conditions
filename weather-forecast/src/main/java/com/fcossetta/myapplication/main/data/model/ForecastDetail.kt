@@ -7,5 +7,4 @@ data class ForecastDetail(
     val forecasts: LinkedHashMap<String, List<Forecast>>?,
     val weather: Forecast?,
     val dailyForecast: List<ShortForecast>?,
-    val cityName: String
 ) : Serializable
