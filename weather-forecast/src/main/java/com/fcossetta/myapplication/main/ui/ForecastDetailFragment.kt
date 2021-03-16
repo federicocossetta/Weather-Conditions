@@ -9,11 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
+import com.fcossetta.myapplication.main.data.SharedViewModel
 import com.fcossetta.myapplication.main.data.model.Forecast
-import com.fcossetta.myapplication.main.utils.Constants
 import com.fcossetta.myapplication.main.utils.CommonFunctions
+import com.fcossetta.myapplication.main.utils.Constants
 import kotlinx.android.synthetic.main.fragment_forecast_detail.*
 import org.koin.core.context.GlobalContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class ForecastDetailFragment : Fragment() {
@@ -25,6 +28,8 @@ class ForecastDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showForecastDetail(args.forecast)
+
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -34,6 +39,7 @@ class ForecastDetailFragment : Fragment() {
             glide.load(format).into(icon)
             weather_condition.text = it.description
         }
+        time.text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(forecast.dt!!*1000))
         forecast.main?.let {
             temp.text = CommonFunctions.formatTemp(it.temp)
             val tempMin = CommonFunctions.formatTemp(it.minTemp)

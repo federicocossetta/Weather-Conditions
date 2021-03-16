@@ -8,6 +8,7 @@ import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
 import com.fcossetta.myapplication.main.data.model.ShortForecast
 import com.fcossetta.myapplication.main.utils.CommonFunctions
+import com.fcossetta.myapplication.main.utils.Constants.Companion.IMG_URL
 import com.fcossetta.myapplication.main.utils.Constants.Companion.IMG_URL_BIG
 import kotlinx.android.synthetic.main.weather_item_list.view.*
 import org.koin.core.context.GlobalContext
@@ -39,7 +40,7 @@ class WeatherAdapter(
         fun bind(current: ShortForecast, format: String) {
             itemView.day.text = format
             if (current.weather?.get(0) != null) {
-                val format = String.format(IMG_URL_BIG, current.weather.get(0).icon)
+                val format = String.format(IMG_URL, current.weather.get(0).icon)
                 glide.load(format).into(itemView.forecast)
             }
 

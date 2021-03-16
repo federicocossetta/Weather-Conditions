@@ -30,14 +30,13 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="01 am" />
-
             <ImageView
                 android:id="@+id/image_forecast"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:adjustViewBounds="true"
-                android:background="@color/gray_secondary"
                 android:maxHeight="50dp"
+                android:padding="5dp"
                 app:layout_constraintStart_toEndOf="@+id/day"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@tools:sample/avatars" />

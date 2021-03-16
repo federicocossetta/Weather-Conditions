@@ -29,10 +29,10 @@
             android:name="forecast_detail"
             app:argType="com.fcossetta.myapplication.main.data.model.ForecastDetail" />
         <action
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
             android:id="@+id/action_loading_to_detail"
-            app:destination="@id/weatherDetail" />
+            app:destination="@id/weatherDetail"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/weatherDetail"
@@ -44,7 +44,12 @@
             app:argType="com.fcossetta.myapplication.main.data.model.WeatherDetail" />
         <action
             android:id="@+id/forecast_detail_action"
-            app:destination="@id/forecast_detail_fragment" />
+            app:destination="@id/forecast_detail_fragment">
+
+            <argument
+                android:name="forecast"
+                app:argType="com.fcossetta.myapplication.main.data.model.Forecast" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/forecast_detail_fragment"

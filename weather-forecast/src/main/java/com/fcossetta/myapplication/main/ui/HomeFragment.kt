@@ -7,17 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
+import com.fcossetta.myapplication.main.data.SharedViewModel
 import com.fcossetta.myapplication.main.data.model.Forecast
 import com.fcossetta.myapplication.main.data.model.ShortForecast
 import com.fcossetta.myapplication.main.data.model.WeatherDetail
-import com.fcossetta.myapplication.main.utils.Constants
 import com.fcossetta.myapplication.main.utils.CommonFunctions
+import com.fcossetta.myapplication.main.utils.Constants
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.core.context.GlobalContext
 import java.text.SimpleDateFormat
@@ -98,6 +100,11 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
             requireActivity().supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
         val currentDay =
             WeatherDetail(args.forecastDetail.forecasts, data)
+
+        val bundle = Bundle().apply { putString("ARGUMENT_MESSAGE", data) }
+        var viewModel =
+            ViewModelProviders.of(requireActivity()).get(SharedViewModel::class.java)
+        viewModel.bundleFromFragmentBToFragmentA.value = bundle
         navHostFragment.navController.navigate(
             HomeFragmentDirections.actionLoadingToDetail(
                 currentDay

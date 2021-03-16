@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
             val instance = Calendar.getInstance()
             instance.time = Date(System.currentTimeMillis())
-            instance.add(Calendar.DATE, 5)
+            instance.add(Calendar.DATE, 4)
             instance.set(Calendar.HOUR, 23)
             instance.set(Calendar.MINUTE, 59)
             when (val event = it.take()) {
@@ -80,13 +80,13 @@ class MainActivity : AppCompatActivity() {
                         //remove today forecast
                         val filter = forecastList!!.forecasts?.filter { forecast ->
                             val times = forecast.dt?.times(1000)
-                            times == null || (!DateUtils.isToday(times) && Date(times).before(
+                            times == null || Date(times).before(
                                 instance.time
-                            ))
+                            )
 
                         }
                         groups = filter?.groupBy { item ->
-                            val date = formatIn.parse(item.displayTime)
+                            val date = formatIn.parse(item.displayTime!!)
                             formatOut.format(date)
 
                         } as LinkedHashMap<String, List<Forecast>>?
@@ -107,9 +107,9 @@ class MainActivity : AppCompatActivity() {
                     val dailyForecast: ForecastDailyInfo = event.forecasts
                     val filter = dailyForecast.forecasts?.filter { forecast ->
                         val times = forecast.dt?.times(1000)
-                        times == null || (!DateUtils.isToday(times) && Date(times).before(
+                        times == null || Date(times).before(
                             instance.time
-                        ))
+                        )
                     }
                     val currentDay = ForecastDetail(groups, weather, filter)
                     title = cityName.capitalize(Locale.getDefault())
