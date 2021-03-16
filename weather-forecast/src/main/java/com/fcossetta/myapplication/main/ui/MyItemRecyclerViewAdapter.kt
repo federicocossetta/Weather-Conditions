@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
+import com.fcossetta.myapplication.main.data.ForecastViewModel
 import com.fcossetta.myapplication.main.data.model.Forecast
 import com.fcossetta.myapplication.main.utils.Constants
 import org.koin.core.context.GlobalContext
@@ -17,6 +18,8 @@ import java.util.*
 
 class MyItemRecyclerViewAdapter(
     private val values: List<Forecast>,
+    private val viewModel: ForecastViewModel,
+    private val cellClickListener: CellClickListener,
     private val sdf: SimpleDateFormat = SimpleDateFormat("hh aa", Locale.getDefault())
 ) : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
     private val glide: RequestManager by lazy { GlobalContext.get().koin.get() }
@@ -34,6 +37,10 @@ class MyItemRecyclerViewAdapter(
         holder.description.text = item.weather?.get(0)?.description.toString()
         val iconUrl = String.format(Constants.IMG_URL, item.weather?.get(0)?.icon)
         glide.load(iconUrl).into(holder.icon)
+        holder.itemView.setOnClickListener {
+            viewModel.action { cellClickListener.onCellClickListener(item) }
+        }
+
     }
 
     override fun getItemCount(): Int = values.size
@@ -46,3 +53,10 @@ class MyItemRecyclerViewAdapter(
 
     }
 }
+
+interface CellClickListener {
+    fun onCellClickListener(data: Forecast)
+
+}
+
+

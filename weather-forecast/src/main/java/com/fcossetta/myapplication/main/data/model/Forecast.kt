@@ -70,9 +70,9 @@ data class Main(
     @Json(name = "feels_like")
     val feelsLike: Double? = null,
     @Json(name = "temp_min")
-    val tempMin: Double? = null,
+    val minTemp: Double? = null,
     @Json(name = "temp_max")
-    val tempMax: Double? = null,
+    val maxTemp: Double? = null,
     @Json(name = "pressure")
     val pressure: Double? = null,
     @Json(name = "humidity")

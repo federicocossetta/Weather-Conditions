@@ -13,17 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
 import com.fcossetta.myapplication.main.data.model.Forecast
-import com.fcossetta.myapplication.main.data.model.ForecastDailyInfo
+import com.fcossetta.myapplication.main.data.model.ShortForecast
 import com.fcossetta.myapplication.main.data.model.WeatherDetail
 import com.fcossetta.myapplication.main.utils.Constants
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.core.context.GlobalContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
 
     val args: HomeFragmentArgs by navArgs()
     val glide: RequestManager by lazy { GlobalContext.get().koin.get() }
+    var df: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +44,7 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
     }
 
     private fun showData(
-        shortInfo: ForecastDailyInfo,
+        shortInfo: List<ShortForecast>?,
         currentForecast: Forecast?,
         cityNameString: String
     ) {
@@ -53,15 +56,20 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
                 glide.load(format).into(icon)
             }
             if (currentForecast.main != null) {
-                max.text = currentForecast.main.tempMax.toString()
-                min.text = currentForecast.main.tempMin.toString()
+                max.text = currentForecast.main.maxTemp.toString()
+                min.text = currentForecast.main.minTemp.toString()
             }
         }
-        if (shortInfo.forecasts != null) {
-            val weatherAdapter = WeatherAdapter(shortInfo.forecasts, this)
-
+        if (shortInfo != null) {
+            // remove current day from forecasts
+            val weatherAdapter = WeatherAdapter(shortInfo, this)
             val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-            itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
+            itemDecorator.setDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.divider
+                )!!
+            )
             forecast_container.apply {
                 // set a LinearLayoutManager to handle Android
                 // RecyclerView behavior
@@ -78,8 +86,8 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
     override fun onCellClickListener(data: String) {
         val navHostFragment =
             requireActivity().supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
-        navHostFragment.childFragmentManager.fragments[0]
-        val currentDay = WeatherDetail(args.forecastDetail.forecasts, data, args.forecastDetail.cityName)
+        val currentDay =
+            WeatherDetail(args.forecastDetail.forecasts, data, args.forecastDetail.cityName)
         navHostFragment.navController.navigate(
             HomeFragmentDirections.actionLoadingToDetail(
                 currentDay

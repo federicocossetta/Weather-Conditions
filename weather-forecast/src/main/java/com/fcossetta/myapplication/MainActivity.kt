@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,7 +18,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.fcossetta.myapplication.main.data.ForecastViewModel
 import com.fcossetta.myapplication.main.data.model.*
-import com.fcossetta.myapplication.main.ui.ForecastEvent
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.uniflow.androidx.flow.onEvents
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,6 +60,12 @@ class MainActivity : AppCompatActivity() {
         }
         formatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         onEvents(viewModel) {
+
+            val instance = Calendar.getInstance()
+            instance.time = Date(System.currentTimeMillis())
+            instance.add(Calendar.DATE, 5)
+            instance.set(Calendar.HOUR, 23)
+            instance.set(Calendar.MINUTE, 59)
             when (val event = it.take()) {
                 is ForecastEvent.WeatherConditionFound -> {
                     weather = event.weather
@@ -71,7 +77,15 @@ class MainActivity : AppCompatActivity() {
                     if (forecastList != null) {
                         city = event.forecasts.city
                         val formatIn = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
-                        groups = forecastList!!.forecasts?.groupBy { item ->
+                        //remove today forecast
+                        val filter = forecastList!!.forecasts?.filter { forecast ->
+                            val times = forecast.dt?.times(1000)
+                            times == null || (!DateUtils.isToday(times) && Date(times).before(
+                                instance.time
+                            ))
+
+                        }
+                        groups = filter?.groupBy { item ->
                             val date = formatIn.parse(item.displayTime)
                             formatOut.format(date)
 
@@ -91,8 +105,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 is ForecastEvent.DailyInfoFound -> {
                     val dailyForecast: ForecastDailyInfo = event.forecasts
-                    val currentDay = ForecastDetail(groups, weather, dailyForecast, cityName)
-                    title = cityName
+                    val filter = dailyForecast.forecasts?.filter { forecast ->
+                        val times = forecast.dt?.times(1000)
+                        times == null || (!DateUtils.isToday(times) && Date(times).before(
+                            instance.time
+                        ))
+                    }
+                    val currentDay = ForecastDetail(groups, weather, filter, cityName)
+                    title = cityName.capitalize()
                     (findItem.actionView as SearchView).apply {
                         setQuery("", false);
                         isIconified = true;
@@ -119,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         if (Intent.ACTION_SEARCH == intent.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 cityName = query
-                viewModel.getWeatherByCity(cityName)
+                viewModel.getWeatherByCity(cityName.trim())
             }
         }
     }

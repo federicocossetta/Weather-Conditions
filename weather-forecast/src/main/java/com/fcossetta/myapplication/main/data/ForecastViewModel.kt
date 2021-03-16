@@ -6,7 +6,7 @@ import com.fcossetta.myapplication.main.data.api.ApiHelper
 import com.fcossetta.myapplication.main.data.model.Forecast
 import com.fcossetta.myapplication.main.data.model.ForecastDailyInfo
 import com.fcossetta.myapplication.main.data.model.ForecastList
-import com.fcossetta.myapplication.main.ui.ForecastEvent
+import com.fcossetta.myapplication.main.data.model.ForecastEvent
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -31,10 +31,10 @@ class ForecastViewModel(private val apiHelper: ApiHelper) :
                         moshi.adapter(ForecastList::class.java)
                     val jsonString = response.body()
                     jsonString?.string()?.let {
-                        val fromJson = adapter?.fromJson(it)
-                        if (fromJson != null) {
+                        val forecastList = adapter?.fromJson(it)
+                        if (forecastList != null) {
                             action {
-                                sendEvent { ForecastEvent.ForecastsFound(fromJson) }
+                                sendEvent { ForecastEvent.ForecastsFound(forecastList) }
                             }
                         }
                     }

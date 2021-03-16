@@ -10,21 +10,16 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fcossetta.myapplication.R
+import com.fcossetta.myapplication.main.data.ForecastViewModel
 import com.fcossetta.myapplication.main.data.model.Forecast
-import java.io.Serializable
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
-class ForecastListFragment : Fragment() {
+class ForecastListFragment(var forecasts: List<Forecast>?, var clickListener: CellClickListener) :
+    Fragment() {
 
-    private lateinit var forecasts: List<Forecast>
+    private val viewModel: ForecastViewModel by sharedViewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            forecasts = it.getSerializable(FORECASTS) as List<Forecast>
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,28 +28,22 @@ class ForecastListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_forecast_list_list, container, false)
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = LinearLayoutManager(context)
-                adapter = MyItemRecyclerViewAdapter(forecasts)
-                addItemDecoration(itemDecorator)
-                setHasFixedSize(true)
+        forecasts?.let {
+            val myItemRecyclerViewAdapter =
+                MyItemRecyclerViewAdapter(it, viewModel, clickListener)
+            // Set the adapter
+            if (view is RecyclerView) {
+                with(view) {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = myItemRecyclerViewAdapter
+                    addItemDecoration(itemDecorator)
+                    setHasFixedSize(true)
+                }
             }
         }
+
         return view
     }
 
-    companion object {
 
-        const val FORECASTS = "column-count"
-
-        @JvmStatic
-        fun newInstance(forecasts: List<Forecast>?, city: String) =
-            ForecastListFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(FORECASTS, forecasts as Serializable)
-                }
-            }
-    }
 }

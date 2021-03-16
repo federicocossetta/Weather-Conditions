@@ -1,56 +1,71 @@
 package com.fcossetta.myapplication.main.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.RequestManager
 import com.fcossetta.myapplication.R
-import com.fcossetta.myapplication.main.data.model.WeatherDetail
-import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.weather_detail.*
+import com.fcossetta.myapplication.main.data.model.Forecast
+import com.fcossetta.myapplication.main.utils.Constants
+import kotlinx.android.synthetic.main.fragment_forecast_detail.*
+import org.koin.core.context.GlobalContext
 
 
-/**
- * A placeholder fragment containing a simple view.
- */
 class ForecastDetailFragment : Fragment() {
+
+    val args: ForecastDetailFragmentArgs by navArgs()
+    private val glide: RequestManager by lazy { GlobalContext.get().koin.get() }
+
+
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        showForecastDetail(args.forecast)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showForecastDetail(forecast: Forecast) {
+        forecast.weather?.get(0)?.let {
+            val format = String.format(Constants.IMG_URL_BIG, it.icon)
+            glide.load(format).into(icon)
+            weather_condition.text = it.description
+        }
+        forecast.main?.let {
+            temp.text = it.temp.toString()
+            val tempMin = it.minTemp.toString()
+            val tempMax = it.maxTemp.toString()
+            minMax.text = "$tempMin / $tempMax"
+            feel.text = it.feelsLike.toString()
+            humidity.text = it.humidity.toString()
+            pressure.text = it.pressure.toString()
+        }
+        forecast.clouds?.let {
+            clouds.text = it.all.toString()
+        }
+        forecast.rain?.let {
+            val threeHourRainPercentage = it.threeHourRainPercentage
+            rain.text = "$threeHourRainPercentage "
+        }
+        visibility.text = forecast.visibility.toString()
+        forecast.wind?.let {
+            val deg = it.deg
+            val speed = it.speed
+            wind.text = "$speed / $deg"
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.weather_detail, container, false)
-        return root
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_forecast_detail, container, false)
     }
-
-    val args: ForecastDetailFragmentArgs by navArgs()
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val forecastsList: WeatherDetail = args.forecastsList
-        super.onViewCreated(view, savedInstanceState)
-        if (
-            activity?.supportFragmentManager != null) {
-            val tabs: TabLayout = tabs
-            tabs.setupWithViewPager(view_pager)
-            val sectionsPagerAdapter = SectionsPagerAdapter(
-                requireActivity().supportFragmentManager,
-                forecastsList.forecast!!, forecastsList.currentCity
-            )
-            view_pager.adapter = sectionsPagerAdapter
-            val iterator: Iterator<*> = forecastsList.forecast.iterator()
-            var n = 0
-            while (iterator.hasNext()) {
-                val entry = iterator.next() as Map.Entry<*, *>
-                if (entry.key?.equals(forecastsList.currentDay) == true) {
-                    break
-                }
-                n++
-            }
-            view_pager.currentItem = n
-
-        }
-    }
-
 
 }

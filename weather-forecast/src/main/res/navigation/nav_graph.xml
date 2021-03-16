@@ -15,36 +15,47 @@
             android:name="forecast_detail"
             app:argType="com.fcossetta.myapplication.main.data.model.ForecastDetail" />
     </action>
+
     <fragment
         android:id="@+id/home"
         android:name="com.fcossetta.myapplication.main.ui.InfoFragment"
-        tools:layout="@layout/fragment_info"/>
+        tools:layout="@layout/fragment_info" />
+
     <fragment
         android:id="@+id/fragmentHome"
         android:name="com.fcossetta.myapplication.main.ui.HomeFragment"
         tools:layout="@layout/fragment_home">
         <argument
-
             android:name="forecast_detail"
             app:argType="com.fcossetta.myapplication.main.data.model.ForecastDetail" />
         <action
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
             android:id="@+id/action_loading_to_detail"
-            app:destination="@id/weatherDetail">
-            <argument
-                android:name="forecastsList"
-                app:argType="com.fcossetta.myapplication.main.data.model.WeatherDetail" />
-        </action>
+            app:destination="@id/weatherDetail" />
     </fragment>
     <fragment
         android:id="@+id/weatherDetail"
-        android:name="com.fcossetta.myapplication.main.ui.ForecastDetailFragment"
+        android:name="com.fcossetta.myapplication.main.ui.ForecastsFragment"
         android:label="main_fragment"
-        app:popUpToInclusive="true"
         tools:layout="@layout/weather_detail">
         <argument
-
             android:name="forecastsList"
             app:argType="com.fcossetta.myapplication.main.data.model.WeatherDetail" />
+        <action
+            android:id="@+id/forecast_detail_action"
+            app:destination="@id/forecast_detail_fragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/forecast_detail_fragment"
+        android:name="com.fcossetta.myapplication.main.ui.ForecastDetailFragment"
+        android:label="forecast_detail"
+        tools:layout="@layout/fragment_forecast_detail">
+        <argument
+            android:name="forecast"
+            app:argType="com.fcossetta.myapplication.main.data.model.Forecast" />
+        <action
+            android:id="@+id/action_forecast_detail_fragment_to_weatherDetail"
+            app:destination="@id/weatherDetail" />
+    </fragment>
 </navigation>
