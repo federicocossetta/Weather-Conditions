@@ -84,20 +84,20 @@ class ForecastsFragment : Fragment() {
                         positionOffset: Float,
                         positionOffsetPixels: Int
                     ) {
-                        val elementAt = forecastsList.forecast!!.keys.elementAt(position)
+                        val elementAt = forecastsList.forecast.keys.elementAt(position)
                         day = elementAt
 
                     }
 
                     override fun onPageSelected(position: Int) {
-                        val elementAt = forecastsList.forecast!!.keys.elementAt(position)
+                        val elementAt = forecastsList.forecast.keys.elementAt(position)
                         day = elementAt
                     }
                 })
                 view_pager.doOnPreDraw { view_pager.setCurrentItem(n, false) }
                 TabLayoutMediator(tabs, view_pager) { tab, position ->
-                    val elementAt = forecastsList.forecast!!.keys.elementAt(position)
-                    tab.text = elementAt
+                    val elementAt = forecastsList.forecast.keys.elementAt(position)
+                    tab.text = elementAt.substring(0,elementAt.lastIndexOf("-"))
                 }.attach()
             }
         })

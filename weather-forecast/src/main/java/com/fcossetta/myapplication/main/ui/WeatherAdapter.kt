@@ -19,7 +19,7 @@ import java.util.*
 class WeatherAdapter(
     private var dataList: List<ShortForecast>,
     private val cellClickListener: CellClickListener,
-    var df: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    var df: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
 ) :
     RecyclerView.Adapter<WeatherAdapter.MyViewHolder>() {
 

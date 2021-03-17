@@ -30,7 +30,6 @@ class HomeFragment : Fragment(), WeatherAdapter.CellClickListener {
 
     val args: HomeFragmentArgs by navArgs()
     val glide: RequestManager by lazy { GlobalContext.get().koin.get() }
-    var df: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

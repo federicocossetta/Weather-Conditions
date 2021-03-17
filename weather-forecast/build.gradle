@@ -8,11 +8,20 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+Properties props = new Properties()
+props.load(new FileInputStream(new File('build.properties')))
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
-
+    signingConfigs {
+        release {
+            storeFile file(props['KEYSTORE_PATH'])
+            storePassword props['KEYSTORE_ALIAS_PASSWORD']
+            keyAlias props['KEYSTORE_ALIAS']
+            keyPassword props['KEYSTORE_PASSWORD']
+        }
+    }
     defaultConfig {
         applicationId "com.fcossetta.simpleForecast"
         minSdkVersion 21
@@ -20,11 +29,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "API_KEY", "\"685dffb5b83321821c450dc61e754193\""
+        buildConfigField "String", "API_KEY", props["API_KEY"]
     }
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

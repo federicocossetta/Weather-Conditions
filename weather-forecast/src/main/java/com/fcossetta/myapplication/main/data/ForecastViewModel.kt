@@ -3,10 +3,7 @@ package com.fcossetta.myapplication.main.data
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.fcossetta.myapplication.main.data.api.ApiHelper
-import com.fcossetta.myapplication.main.data.model.Forecast
-import com.fcossetta.myapplication.main.data.model.ForecastDailyInfo
-import com.fcossetta.myapplication.main.data.model.ForecastList
-import com.fcossetta.myapplication.main.data.model.ForecastEvent
+import com.fcossetta.myapplication.main.data.model.*
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -56,6 +53,7 @@ class ForecastViewModel(private val apiHelper: ApiHelper) :
     }
 
     fun getWeatherByCity(cityName: String) {
+        action { setState { InterfaceState.LoadingStatus(true) } }
         apiHelper.getWeatherConditions(cityName).enqueue(object :
             Callback<ResponseBody?> {
             override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {

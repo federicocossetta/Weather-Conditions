@@ -44,7 +44,9 @@
             app:argType="com.fcossetta.myapplication.main.data.model.WeatherDetail" />
         <action
             android:id="@+id/forecast_detail_action"
-            app:destination="@id/forecast_detail_fragment">
+            app:destination="@id/forecast_detail_fragment"
+
+            app:enterAnim="@anim/fragment_fade_enter">
 
             <argument
                 android:name="forecast"

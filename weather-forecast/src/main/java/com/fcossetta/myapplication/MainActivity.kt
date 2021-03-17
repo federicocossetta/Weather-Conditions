@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -20,6 +20,8 @@ import com.fcossetta.myapplication.main.data.ForecastViewModel
 import com.fcossetta.myapplication.main.data.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.uniflow.androidx.flow.onEvents
+import io.uniflow.androidx.flow.onStates
+import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,7 +60,33 @@ class MainActivity : AppCompatActivity() {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         }
-        formatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        formatOut = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+        loading.setOnTouchListener(object : View.OnClickListener, View.OnTouchListener {
+            override fun onClick(v: View?) {
+                // do nothing
+            }
+
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                return false
+            }
+
+
+        })
+        onStates(viewModel) {
+            when (val event = it) {
+                is InterfaceState.LoadingStatus -> {
+                    fab.isEnabled = !event.loading
+                    if (event.loading) {
+                        loading.visibility = View.VISIBLE
+                    } else {
+                        loading.visibility = View.GONE
+
+                    }
+
+                }
+            }
+        }
         onEvents(viewModel) {
 
             val instance = Calendar.getInstance()
@@ -99,6 +127,7 @@ class MainActivity : AppCompatActivity() {
                 is ForecastEvent.Error -> {
                     val cityRequested = event.city
                     //TODO: BETTER ERROR HANDING
+                    viewModel.action { setState { InterfaceState.LoadingStatus(false) } }
                     var error =
                         if (cityRequested != null) "No city found with name $cityRequested. Please enter the full city name!" else "Generic Error"
                     Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
@@ -118,6 +147,7 @@ class MainActivity : AppCompatActivity() {
                         isIconified = true;
                     }
                     findItem.isVisible = false
+                    viewModel.action { setState { InterfaceState.LoadingStatus(false) } }
                     navHostFragment.navController.navigate(
                         NavGraphDirections.actionLoadData(
                             currentDay
