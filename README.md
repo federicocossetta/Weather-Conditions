@@ -1,4 +1,4 @@
-# Weather-Conditions
+# Weather-Conditions -1.0
 This is a simple app to show weather.
 You can either [Dowload latest build](https://github.com/federicocossetta/Weather-Conditions/raw/main/weather-forecast-release.apk) or build the app
 
